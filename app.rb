@@ -62,6 +62,12 @@ get '/' do
   end
 end
 
+get '/register/signup' do
+  respond_with :register do |f|
+    f.html { erb :register }
+  end
+end
+
 get '/links' do
   redirect '/'
 end

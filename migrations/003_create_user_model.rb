@@ -1,9 +1,6 @@
-require 'sequel'
-
-# 'create user model'
 Sequel.migration do
   up do
-    create_table :user do
+    create_table :users do
       primary_key :id
       String :name, :unique => true, :null => false
       String :email, :unique => false, :null => false
