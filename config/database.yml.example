@@ -1,19 +1,21 @@
-# Used this to configure sqlite
-# Point this to the configuration above that you wish to use
-sqlite: &airgo_sqlite
-  adapter: sqlite
-  database: development.db
-  verbosity: quiet
-# Use this to configure mysql
-mysql: &airgo_mysql
-  encoding: utf8
-  reconnect: true
-  adapter: mysql2
-  username: airgo
-  database: airgo
-  host: localhost
-  port: 3306
-  password: password
-airgo_db:
-  <<: *airgo_sqlite
+default: &default
+  adapter: sqlite3
+  pool: 5
+  timeout: 5000
 
+development:
+  <<: *default
+  database: db/development.sqlite3
+
+test:
+  <<: *default
+  database: db/test.sqlite3
+
+production:
+  adapter: postgres
+  encoding: unicode
+  pool: 5
+  host: <%= ENV['DB_HOST'] || 'db' %>
+  database: <%= ENV['DB_NAME'] || 'airgo' %>
+  username: <%= ENV['DB_USER'] || 'airgo' %>
+  password: <%= ENV['DB_PASSWORD'] || 'airgo' %>
