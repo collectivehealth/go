@@ -65,7 +65,7 @@ end
 get '/links/suggest' do
   query = params[:q]
 
-  results = Link.filter(:name.like("#{query}%")).or(:url.like("%#{query}%"))
+  results = Link.filter(Sequel.like(:name, "#{query}%")).or(Sequel.like(:url, "%#{query}%"))
   results = results.all.map {|r| r.name }
 
   content_type :json
@@ -74,7 +74,7 @@ end
 
 get '/links/search' do
   query = params[:q]
-  @links = Link.filter(:name.like("#{query}%")).order(Sequel.desc(:hits)).all
+  @links = Link.filter(Sequel.like(:name, "#{query}%")).order(Sequel.desc(:hits)).all
 
   respond_with :index do |f|
     f.html { erb :index, params: params }
