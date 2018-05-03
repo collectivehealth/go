@@ -1,3 +1,4 @@
 *.db
 .DS_Store
 config/database.yml
+db/development.sqlite
