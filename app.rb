@@ -37,7 +37,7 @@ end
 # Actions
 
 get '/' do
-  @links = Link.order(:hits.desc).all
+  @links = Link.order(Sequel.desc(:hits)).all
   respond_with :index do |f|
     f.html { erb :index, params: params }
     f.json { @links.map(&:to_json).to_json }
@@ -74,7 +74,7 @@ end
 
 get '/links/search' do
   query = params[:q]
-  @links = Link.filter(:name.like("#{query}%")).order(:hits.desc).all
+  @links = Link.filter(:name.like("#{query}%")).order(Sequel.desc(:hits)).all
 
   respond_with :index do |f|
     f.html { erb :index, params: params }
@@ -124,9 +124,9 @@ get '/:name/?*?' do
     redirect url
   else
     # try to list sub-links of the namespace
-    filtered_links = Link.filter(:name.like("#{params[:name]}%")).order(:hits.desc).all
+    filtered_links = Link.filter(:name.like("#{params[:name]}%")).order(Sequel.desc(:hits)).all
     if filtered_links.empty?
-      @links = Link.order(:hits.desc).all
+      @links = Link.order(Sequel.desc(:hits)).all
       params[:not_found] = params[:name]
     else
       @links = filtered_links
