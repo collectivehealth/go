@@ -1,0 +1,50 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    backports (3.6.0)
+    eventmachine (1.0.3)
+    kgio (2.8.1)
+    mysql2 (0.3.14)
+    pg (0.18.4)
+    rack (1.4.1)
+    rack-protection (1.2.0)
+      rack
+    rack-test (0.6.2)
+      rack (>= 1.0)
+    raindrops (0.12.0)
+    rake (10.0.4)
+    sequel (3.35.0)
+    sinatra (1.3.2)
+      rack (~> 1.3, >= 1.3.6)
+      rack-protection (~> 1.2)
+      tilt (~> 1.3, >= 1.3.3)
+    sinatra-contrib (1.3.2)
+      backports (>= 2.0)
+      eventmachine
+      rack-protection
+      rack-test
+      sinatra (~> 1.3.0)
+      tilt (~> 1.3)
+    sinatra-sequel (0.9.0)
+      sequel (>= 3.2.0)
+      sinatra (>= 0.9.4)
+    sqlite3 (1.3.6)
+    tilt (1.3.3)
+    unicorn (4.7.0)
+      kgio (~> 2.6)
+      rack
+      raindrops (~> 0.7)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  mysql2
+  pg
+  rake
+  sequel
+  sinatra
+  sinatra-contrib
+  sinatra-sequel
+  sqlite3
+  unicorn
