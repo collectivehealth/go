@@ -5,6 +5,13 @@ require 'sinatra/respond_with'
 require 'json'
 
 class Link < Sequel::Model
+
+  def self.search(query) 
+    return self.filter(Sequel.like(:name, "#{query}%"))
+               .or(Sequel.like(:url, "%#{query}%"))
+               .order(Sequel.desc(:hits)).all
+  end
+
   def hit!
     self.hits += 1
     self.save(:validate => false)
@@ -62,19 +69,9 @@ post '/links' do
   end
 end
 
-get '/links/suggest' do
-  query = params[:q]
-
-  results = Link.filter(:name.like("#{query}%")).or(:url.like("%#{query}%"))
-  results = results.all.map {|r| r.name }
-
-  content_type :json
-  results.to_json
-end
-
 get '/links/search' do
   query = params[:q]
-  @links = Link.filter(:name.like("#{query}%")).order(Sequel.desc(:hits)).all
+  @links = Link.search(query)
 
   respond_with :index do |f|
     f.html { erb :index, params: params }
@@ -124,7 +121,7 @@ get '/:name/?*?' do
     redirect url
   else
     # try to list sub-links of the namespace
-    filtered_links = Link.filter(:name.like("#{params[:name]}%")).order(Sequel.desc(:hits)).all
+    filtered_links = Link.search(params[:name])
     if filtered_links.empty?
       @links = Link.order(Sequel.desc(:hits)).all
       params[:not_found] = params[:name]
