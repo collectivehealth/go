@@ -2,8 +2,8 @@ GEM
   remote: https://rubygems.org/
   specs:
     backports (3.6.0)
-    eventmachine (1.0.3)
-    kgio (2.8.1)
+    eventmachine (1.0.4)
+    kgio (2.9.2)
     mysql2 (0.3.14)
     pg (0.18.4)
     rack (1.4.1)
@@ -28,7 +28,7 @@ GEM
     sinatra-sequel (0.9.0)
       sequel (>= 3.2.0)
       sinatra (>= 0.9.4)
-    sqlite3 (1.3.6)
+    sqlite3 (1.3.10)
     tilt (1.3.3)
     unicorn (4.7.0)
       kgio (~> 2.6)
@@ -48,3 +48,9 @@ DEPENDENCIES
   sinatra-sequel
   sqlite3
   unicorn
+
+RUBY VERSION
+   ruby 2.5.1p57
+
+BUNDLED WITH
+   1.16.1
