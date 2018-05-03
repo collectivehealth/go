@@ -1,8 +1,9 @@
 require "sequel"
 require "yaml"
+require "erb"
 
-database_creds = YAML::load(File.read(File.join(File.dirname(__FILE__), 'config/database.yml')))
-database = database_creds["airgo_db"]
+database_creds = YAML::load(ERB.new(File.read(File.join(File.dirname(__FILE__), 'config/database.yml'))).result)
+database = database_creds[ENV["RACK_ENV"]]
 
 namespace :db do
   namespace :migrate do
