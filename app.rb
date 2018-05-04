@@ -101,6 +101,15 @@ post '/register' do
 
 end
 
+get '/login' do 
+  erb :login
+end
+
+post '/login' do
+  halt "Login post doesn't exist yet"
+  # if User.search(params[:email])
+end
+
 get '/links' do
   redirect '/'
 end
