@@ -1,0 +1,17 @@
+<div class="container">
+      <% if params[:not_found] %>
+        <div class="alert alert-danger alert-dismissable">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          <strong><%= params[:not_found] %></strong> is not a valid go link.
+          Please add it if you think it should be.
+        </div>
+      <% end %>
+    <form action="/login" method="post">
+        <div class="form-group">
+            <label for="formGroupExampleInput2">Email Address</label>
+            <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="@collectivehealth.com" name="email">
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+    <p>Don't have an account? <a href="/register/signup">Register here</a></p>
+</div>

@@ -38,7 +38,7 @@ class User < Sequel::Model
 
   def self.search(email)
     unless email.nil? || email.empty?
-      email_id = email.split("@")[0]
+      email_id = email.split("@")[0].strip
       return self.where(email: email_id).first
     end
   end
@@ -64,6 +64,8 @@ end
 enable :sessions
 
 get '/' do
+  redirect '/login' unless session[:id] 
+
   @links = Link.order(Sequel.desc(:hits)).all
 
   unless User.search(session[:id]).nil?
@@ -106,8 +108,18 @@ get '/login' do
 end
 
 post '/login' do
-  halt "Login post doesn't exist yet"
-  # if User.search(params[:email])
+  email = params[:email]
+  if email.nil? || email.empty?
+    halt "You need to give an email address"
+  end
+  user = User.search(email)
+  session[:id] = user.email
+  redirect '/'
+end
+
+post '/logout' do 
+  session.clear
+  redirect '/'
 end
 
 get '/links' do
@@ -179,6 +191,7 @@ get '/:name/?*?' do
 
     redirect url
   else
+    redirect '/login' unless session[:id] 
     # try to list sub-links of the namespace
     filtered_links = Link.search(params[:name])
     if filtered_links.empty?
