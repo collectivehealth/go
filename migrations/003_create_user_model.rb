@@ -2,8 +2,8 @@ Sequel.migration do
   up do
     create_table :users do
       primary_key :id
-      String :name, :unique => true, :null => false
-      String :email, :unique => false, :null => false
+      String :name, :unique => false, :null => false
+      String :email, :unique => true, :null => false
       DateTime :created_at
       index :name
     end
