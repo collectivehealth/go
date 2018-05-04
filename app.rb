@@ -60,6 +60,8 @@ end
 
 # Actions
 
+enable :sessions
+
 get '/' do
   @links = Link.order(Sequel.desc(:hits)).all
   respond_with :index do |f|
@@ -78,12 +80,13 @@ post '/register' do
   puts params
   puts User.search(params[:email]).empty?
   if User.search(params[:email]).empty?
-    User.create(
+    clean_email = params[:email].strip.split("@")[0]
+    user = User.create(
       :name => params[:name].strip,
-      :email=> params[:email].strip.split("@")[0]
+      :email=> clean_email
     )
-    puts "Created user #{params[:name].strip}"
-    # Set the session here
+    puts "Created user #{user}"
+    session[:id] = clean_email
     redirect "/"
   else
     puts "User already exists"
