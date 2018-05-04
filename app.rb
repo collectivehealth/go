@@ -34,6 +34,24 @@ class Link < Sequel::Model
 
 end
 
+class User < Sequel::Model
+
+  def self.search(email)
+    unless email.nil? || email.empty?
+      email_id = email.split("@")[0].strip
+      return self.where(email: email_id).first
+    end
+  end
+
+  def validate
+    super
+    errors.add(:name, 'cannot be empty') if !name || name.empty?
+    errors.add(:email, 'cannot be empty') if !email || email.empty?
+  end
+
+end
+
+
 # Configuration
 
 configure do
@@ -43,12 +61,65 @@ end
 
 # Actions
 
+enable :sessions
+
 get '/' do
+  redirect '/login' unless session[:id] 
+
   @links = Link.order(Sequel.desc(:hits)).all
+
+  unless User.search(session[:id]).nil?
+    params[:name] = User.search(session[:id]).name
+  end
+
   respond_with :index do |f|
     f.html { erb :index, params: params }
     f.json { @links.map(&:to_json).to_json }
   end
+end
+
+get '/register/signup' do
+  respond_with :register do |f|
+    f.html { erb :register }
+  end
+end
+
+post '/register' do
+  if User.search(params[:email]).nil?
+    clean_email = params[:email].strip.split("@")[0]
+    begin
+      user = User.create(
+        :name => params[:name].strip,
+        :email=> clean_email
+      )
+      session[:id] = clean_email
+      redirect "/"
+      rescue Sequel::UniqueConstraintViolation => e
+        halt "Error: User already exists"
+      end
+  else
+    puts "User already exists"
+  end
+
+end
+
+get '/login' do 
+  erb :login
+end
+
+post '/login' do
+  email = params[:email]
+  if email.nil? || email.empty?
+    halt "You need to give an email address"
+  end
+  user = User.search(email)
+  session[:id] = user.email
+  redirect '/'
+end
+
+post '/logout' do 
+  session.clear
+  redirect '/'
 end
 
 get '/links' do
@@ -120,6 +191,7 @@ get '/:name/?*?' do
 
     redirect url
   else
+    redirect '/login' unless session[:id] 
     # try to list sub-links of the namespace
     filtered_links = Link.search(params[:name])
     if filtered_links.empty?
