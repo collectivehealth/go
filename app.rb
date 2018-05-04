@@ -37,9 +37,10 @@ end
 class User < Sequel::Model
 
   def self.search(email)
-    # remove everything after the ampersand
-    email_id = email.split("@")[0]
-    return self.where(email: email_id)
+    unless email.nil? || email.empty?
+      email_id = email.split("@")[0]
+      return self.where(email: email_id).first
+    end
   end
 
   def validate
@@ -64,6 +65,11 @@ enable :sessions
 
 get '/' do
   @links = Link.order(Sequel.desc(:hits)).all
+
+  unless User.search(session[:id]).nil?
+    params[:name] = User.search(session[:id]).name
+  end
+
   respond_with :index do |f|
     f.html { erb :index, params: params }
     f.json { @links.map(&:to_json).to_json }
@@ -77,17 +83,18 @@ get '/register/signup' do
 end
 
 post '/register' do
-  puts params
-  puts User.search(params[:email]).empty?
-  if User.search(params[:email]).empty?
+  if User.search(params[:email]).nil?
     clean_email = params[:email].strip.split("@")[0]
-    user = User.create(
-      :name => params[:name].strip,
-      :email=> clean_email
-    )
-    puts "Created user #{user}"
-    session[:id] = clean_email
-    redirect "/"
+    begin
+      user = User.create(
+        :name => params[:name].strip,
+        :email=> clean_email
+      )
+      session[:id] = clean_email
+      redirect "/"
+      rescue Sequel::UniqueConstraintViolation => e
+        halt "Error: User already exists"
+      end
   else
     puts "User already exists"
   end
