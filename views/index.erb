@@ -44,6 +44,7 @@
           <tr>
             <th>Alias</th>
             <th>URL</th>
+            <th>Author</th>
             <th>Description</th>
             <th># Hits</th>
             <th></th>
@@ -54,6 +55,7 @@
             <tr id="link<%= link.id %>" data-link-id="<%= link.id %>">
               <td id="alias"><a href="/<%= link.name %>"><%= link.name %></a></td>
               <td><div class="ellipsis" id="url"><%= link.url %></div></td>
+              <td><p><%= link.user.name %></p>
               <td id="description"><%= link.description %></td>
               <td><%= link.hits %></td>
               <td>

@@ -6,6 +6,8 @@ require 'json'
 
 class Link < Sequel::Model
 
+  many_to_one :user
+
   def self.search(query) 
     return self.filter(Sequel.like(:name, "#{query}%"))
                .or(Sequel.like(:url, "%#{query}%"))
@@ -35,6 +37,8 @@ class Link < Sequel::Model
 end
 
 class User < Sequel::Model
+
+  one_to_many :link
 
   def self.search(email)
     unless email.nil? || email.empty?
@@ -113,11 +117,14 @@ post '/login' do
     halt "You need to give an email address"
   end
   user = User.search(email)
+  if user.nil?
+    redirect '/register/signup'
+  end
   session[:id] = user.email
   redirect '/'
 end
 
-post '/logout' do 
+get '/logout' do 
   session.clear
   redirect '/'
 end
@@ -127,12 +134,16 @@ get '/links' do
 end
 
 post '/links' do
+  redirect '/login' unless session[:id]
+  user = User.search(session[:id])
   begin
-    Link.create(
+    link = Link.create(
       :name => params[:name].strip,
       :url  => params[:url].strip,
       :description  => params[:description].strip,
+      :user => user
     )
+    # link.user = user
     redirect '/'
   rescue Sequel::ValidationFailed,
          Sequel::DatabaseError => e
