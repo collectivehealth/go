@@ -36,6 +36,12 @@ end
 
 class User < Sequel::Model
 
+  def self.search(email)
+    # remove everything after the ampersand
+    email_id = email.split("@")[0]
+    return self.where(email: email_id)
+  end
+
   def validate
     super
     errors.add(:name, 'cannot be empty') if !name || name.empty?
@@ -66,6 +72,23 @@ get '/register/signup' do
   respond_with :register do |f|
     f.html { erb :register }
   end
+end
+
+post '/register' do
+  puts params
+  puts User.search(params[:email]).empty?
+  if User.search(params[:email]).empty?
+    User.create(
+      :name => params[:name].strip,
+      :email=> params[:email].strip.split("@")[0]
+    )
+    puts "Created user #{params[:name].strip}"
+    # Set the session here
+    redirect "/"
+  else
+    puts "User already exists"
+  end
+
 end
 
 get '/links' do
